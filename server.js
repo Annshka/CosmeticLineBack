@@ -5,6 +5,9 @@ const {errorHandler} = require('./utils/errors');
 
 const app = express();
 
+//Configure ENV File
+require('./config/database');
+
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
