@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const Package = require('../models/packageModel');
 
 /**
  //  @desc   Get all user packages
@@ -6,7 +7,9 @@ const asyncHandler = require('express-async-handler');
  //  @access Private
  * */
 const getPackages = asyncHandler(async (req, res) => {
-    res.status(200).json({message: 'Get packages'})
+    const packages = await Package.find()
+
+    res.status(200).json(packages)
 });
 
 /**
@@ -15,7 +18,9 @@ const getPackages = asyncHandler(async (req, res) => {
  //  @access Private
  * */
 const getPackage = asyncHandler(async (req, res) => {
-    res.status(200).json({message: `Get package ${req.params.id}`})
+    const package = await Package.findById(req.params.id)
+
+    res.status(200).json(package)
 });
 
 /**
@@ -24,7 +29,21 @@ const getPackage = asyncHandler(async (req, res) => {
  //  @access Private
  * */
 const setPackage = asyncHandler(async (req, res) => {
-    res.status(200).json({message: 'Set package'})
+    if(!req.body.code) {
+        res.status(400)
+        throw new Error('Enter package code')
+    }
+    const package = await Package.create({
+        code: req.body.code,
+        type: req.body.type,
+        material: req.body.material,
+        diameter: req.body.diameter,
+        width: req.body.width,
+        surface: req.body.surface,
+        image: req.body.image
+    })
+
+    res.status(200).json(package)
 });
 
 /**
@@ -33,7 +52,18 @@ const setPackage = asyncHandler(async (req, res) => {
  //  @access Private
  * */
 const updatePackage = asyncHandler(async (req, res) => {
-    res.status(200).json({message: `Update package ${req.params.id}`})
+    const package = await Package.findById(req.params.id)
+
+    if(!package) {
+        res.status(400)
+        throw new Error('Package not found...')
+    }
+
+    const updatedPackage = await Package.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+    })
+
+    res.status(200).json(updatedPackage)
 });
 
 /**
@@ -42,7 +72,16 @@ const updatePackage = asyncHandler(async (req, res) => {
  //  @access Private
  * */
 const deletePackage = asyncHandler(async (req, res) => {
-    res.status(200).json({message: `Delete package ${req.params.id}`})
+    const package = await Package.findById(req.params.id)
+
+    if(!package) {
+        res.status(400)
+        throw new Error('Package not found...')
+    }
+
+    await package.deleteOne()
+
+    res.status(200).json({id: req.params.id})
 });
 
 module.exports = {
