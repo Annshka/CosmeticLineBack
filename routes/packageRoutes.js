@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const {getPackages, getPackage, setPackage, updatePackage, deletePackage} = require('../controllers/packageController');
 
-router.route('/').get(getPackages).post(setPackage);
-router.route('/:id').get(getPackage).put(updatePackage).delete(deletePackage);
+const {protect} = require('../utils/auth');
+
+router.route('/').get(protect, getPackages).post(protect, setPackage);
+router.route('/:id').get(protect, getPackage).put(protect, updatePackage).delete(protect, deletePackage);
 
 module.exports = router;
