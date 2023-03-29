@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Package = require('../models/packageModel');
+const User = require('../models/userModel');
 
 
 /**
@@ -8,7 +9,7 @@ const Package = require('../models/packageModel');
  //  @access Private
  * */
 const getPackages = asyncHandler(async (req, res) => {
-    const packages = await Package.find()
+    const packages = await Package.find({user: req.user.id})
 
     res.status(200).json(packages)
 });
@@ -41,7 +42,8 @@ const setPackage = asyncHandler(async (req, res) => {
         diameter: req.body.diameter,
         width: req.body.width,
         surface: req.body.surface,
-        image: req.body.image
+        image: req.body.image,
+        user: req.user.id,
     })
 
     res.status(200).json(package)
@@ -58,6 +60,17 @@ const updatePackage = asyncHandler(async (req, res) => {
     if(!package) {
         res.status(400)
         throw new Error('Package not found...')
+    }
+
+    //Check for user and make sure logged in user matches user item
+    if(!req.user) {
+        res.status(401)
+        throw new Error('User not found')
+    }
+
+    if (package.user.toString() !== req.user.id) {
+        res.status(401)
+        throw new Error('User not authorized')
     }
 
     const updatedPackage = await Package.findByIdAndUpdate(req.params.id, req.body, {
@@ -79,6 +92,18 @@ const deletePackage = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error('Package not found...')
     }
+
+    //Check for user and make sure logged in user matches user item
+    if(!req.user) {
+        res.status(401)
+        throw new Error('User not found')
+    }
+
+    if (package.user.toString() !== req.user.id) {
+        res.status(401)
+        throw new Error('User not authorized')
+    }
+
 
     await package.deleteOne()
 
