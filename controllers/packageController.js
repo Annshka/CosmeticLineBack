@@ -11,7 +11,12 @@ const User = require('../models/userModel');
 const getPackages = asyncHandler(async (req, res) => {
     const packages = await Package.find({user: req.user.id})
 
+    if(!packages) {
+        res.status(401)
+        throw new Error('Packages not found')
+    }
     res.status(200).json(packages)
+    console.log('getPackages')
 });
 
 /**
@@ -22,7 +27,20 @@ const getPackages = asyncHandler(async (req, res) => {
 const getPackage = asyncHandler(async (req, res) => {
     const package = await Package.findById(req.params.id)
 
+
+    //Check for user and make sure logged in user matches user item
+    if(!req.user) {
+        res.status(401)
+        throw new Error('User not found')
+    }
+
+    if (package.user.toString() !== req.user.id) {
+        res.status(401)
+        throw new Error('User not authorized')
+    }
+
     res.status(200).json(package)
+    console.log('Get package')
 });
 
 /**
@@ -35,6 +53,7 @@ const setPackage = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error('Enter package code')
     }
+
     const package = await Package.create({
         code: req.body.code,
         type: req.body.type,
@@ -47,6 +66,8 @@ const setPackage = asyncHandler(async (req, res) => {
     })
 
     res.status(200).json(package)
+
+    console.log('setPackage')
 });
 
 /**
@@ -55,6 +76,7 @@ const setPackage = asyncHandler(async (req, res) => {
  //  @access Private
  * */
 const updatePackage = asyncHandler(async (req, res) => {
+    console.log("updating")
     const package = await Package.findById(req.params.id)
 
     if(!package) {
@@ -73,9 +95,9 @@ const updatePackage = asyncHandler(async (req, res) => {
         throw new Error('User not authorized')
     }
 
-    const updatedPackage = await Package.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-    })
+    const updatedPackage = await Package.findByIdAndUpdate(req.params.id, req.body,
+        { new: true},
+    )
 
     res.status(200).json(updatedPackage)
 });
