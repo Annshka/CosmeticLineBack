@@ -50,7 +50,7 @@ Built with:
 
 ### Clone Repo
 Clone Git repo:
-https://github.com/Annshka/CosmeticLineFront.git
+https://github.com/Annshka/CosmeticLineBack.git
 
 ### Run Project
 
