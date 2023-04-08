@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const packageSchema = new mongoose.Schema({
+    id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: '_id'
+        },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
