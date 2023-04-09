@@ -49,11 +49,14 @@ Built with:
 
 ### Clone Repo
 Clone Git repo:
+```
 https://github.com/Annshka/CosmeticLineBack.git
+```
 
 ### Run Project
 To run API server, install it locally using npm:
-
+```
  npm install
  npm run server
+ ```
 
