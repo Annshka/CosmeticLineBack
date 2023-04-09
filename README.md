@@ -52,6 +52,8 @@ Clone Git repo:
 https://github.com/Annshka/CosmeticLineBack.git
 
 ### Run Project
+To run API server, install it locally using npm:
 
-- Run API server: npm run server
+ npm install
+ npm run server
 
